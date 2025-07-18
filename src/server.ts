@@ -3,6 +3,7 @@
 import mongoose from 'mongoose';
 import app from './app';
 import { envVars } from './app/config/env';
+import { adminSeed } from './app/utils/adminSeed';
 
 
 // let server: Server;
@@ -24,4 +25,7 @@ const startServer = async () => {
     }
 }
 
-startServer()
+(async() =>{
+    await startServer()
+    await adminSeed()
+})()

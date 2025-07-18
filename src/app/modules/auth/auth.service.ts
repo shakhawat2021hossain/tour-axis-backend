@@ -2,7 +2,9 @@ import AppError from "../../erroHelpers/AppError";
 import { IUser } from "../user/user.interface"
 import { User } from "../user/user.model";
 import httpStatus from "http-status-codes"
-import bcrypt from "bcryptjs"
+import bcrypt from "bcryptjs";
+import { generateToken } from "../../utils/jwt";
+import { envVars } from "../../config/env";
 
 
 const credentialLogin = async (payload: Partial<IUser>) => {
@@ -18,7 +20,16 @@ const credentialLogin = async (payload: Partial<IUser>) => {
         throw new AppError(httpStatus.BAD_REQUEST, "Icorrect password!")
     }
 
-    return { email: isExist.email }
+    const jwtPayload = {
+        userId: isExist._id,
+        email: isExist.email,
+        role: isExist.role
+    }
+
+    const token = generateToken(jwtPayload, envVars.JWT_SECRET as string, "7d")
+    
+
+    return { email: isExist.email, token }
 
 }
 
