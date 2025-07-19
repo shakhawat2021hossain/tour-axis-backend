@@ -14,7 +14,7 @@ export const checkAuth = (...authRoles: string[]) => async (req: Request, res: R
         if (!authRoles.includes(isVerified.role)) {
             throw new AppError(403, "You are not permitted for accessing the route!")
         }
-        // req.user = isVerified
+        req.user = isVerified
         next()
     }
     catch (error) {

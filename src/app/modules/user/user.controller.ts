@@ -3,12 +3,26 @@ import httpStatus from "http-status-codes"
 import { userServices } from "./user.service";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
+import { JwtPayload } from "jsonwebtoken"
 // import AppError from "../../erroHelpers/AppError";
 
 
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
     const result = await userServices.createUser(req.body)
+    
+    sendResponse(res, {
+        statusCode: httpStatus.CREATED,
+        success: true,
+        data: result,
+        message: "Successfully crreated a new user"
+    })
+})
+
+const updateUser = catchAsync(async (req: Request, res: Response) => {
+    // const token = req.headers.token
+    // const decodedToken = jwt.verify(token as string, envVars.JWT_SECRET)
+    const result = await userServices.updateUser(req.params.id, req.body, req.user as JwtPayload)
     
     sendResponse(res, {
         statusCode: httpStatus.CREATED,
@@ -28,6 +42,9 @@ const getAllUser = catchAsync(async (req: Request, res: Response) => {
         message: "All users are retrieved"
     })
 })
+
+export const userControllers = { createUser, updateUser, getAllUser }
+
 
 // const createUser = async (req: Request, res: Response, next: NextFunction) => {
 //     try {
@@ -62,5 +79,3 @@ const getAllUser = catchAsync(async (req: Request, res: Response) => {
 
 //     }
 // }
-
-export const userControllers = { createUser, getAllUser }
