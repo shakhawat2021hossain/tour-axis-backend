@@ -3,8 +3,7 @@ import { IUser } from "../user/user.interface"
 import { User } from "../user/user.model";
 import httpStatus from "http-status-codes"
 import bcrypt from "bcryptjs";
-import { generateToken } from "../../utils/jwt";
-import { envVars } from "../../config/env";
+import { accessTokenWithRefreshToken, userTokens } from "../../utils/userTokens";
 
 
 const credentialLogin = async (payload: Partial<IUser>) => {
@@ -26,14 +25,32 @@ const credentialLogin = async (payload: Partial<IUser>) => {
         role: isExist.role
     }
 
-    const token = generateToken(jwtPayload, envVars.JWT_SECRET as string, "7d")
-    
+    const tokens = await userTokens(jwtPayload)
 
-    return { email: isExist.email, token }
+    const user =  isExist.toObject();
+
+    delete user.password
+
+    return { 
+        user,
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken
+    }
+
+}
+
+const getNewAccessToken = async (refreshToken: string) => {
+    
+   const accessToken = await accessTokenWithRefreshToken(refreshToken)
+
+    return { 
+        accessToken
+    }
 
 }
 
 
 export const authServices = {
-    credentialLogin
+    credentialLogin,
+    getNewAccessToken
 }

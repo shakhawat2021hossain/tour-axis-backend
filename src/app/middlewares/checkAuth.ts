@@ -18,7 +18,7 @@ export const checkAuth = (...authRoles: string[]) => async (req: Request, res: R
         next()
     }
     catch (error) {
-        console.log(error);
+        // console.log(error);
         next(error)
     }
 
