@@ -4,6 +4,7 @@ import { User } from "../user/user.model";
 import httpStatus from "http-status-codes"
 import bcrypt from "bcryptjs";
 import { accessTokenWithRefreshToken, userTokens } from "../../utils/userTokens";
+import { JwtPayload } from "jsonwebtoken";
 
 
 const credentialLogin = async (payload: Partial<IUser>) => {
@@ -19,13 +20,7 @@ const credentialLogin = async (payload: Partial<IUser>) => {
         throw new AppError(httpStatus.BAD_REQUEST, "Icorrect password!")
     }
 
-    const jwtPayload = {
-        userId: isExist._id,
-        email: isExist.email,
-        role: isExist.role
-    }
-
-    const tokens = await userTokens(jwtPayload)
+    const tokens = await userTokens(isExist)
 
     const user =  isExist.toObject();
 
@@ -49,8 +44,28 @@ const getNewAccessToken = async (refreshToken: string) => {
 
 }
 
+const resetPass = async(oldPass: string, newPass: string, decodedToken: JwtPayload) =>{
+    console.log(decodedToken);
+    const user =  await User.findById(decodedToken.userId)
+    if(!user){
+        throw new AppError(httpStatus.NOT_FOUND, "User not found!")
+    }
+    
+    const isMatched = await bcrypt.compare(oldPass, user?.password as string)
+    if(!isMatched){
+        throw new AppError(httpStatus.UNAUTHORIZED, "Password didnot matched")
+    }
+
+    const hashedPass = await bcrypt.hash(newPass, 10) as string
+
+    user.password = hashedPass;
+
+    user.save()
+
+}
 
 export const authServices = {
     credentialLogin,
-    getNewAccessToken
+    getNewAccessToken,
+    resetPass
 }

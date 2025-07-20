@@ -12,6 +12,7 @@ export const userTokens = async (user: JwtPayload) => {
         email: user.email,
         role: user.role
     }
+    console.log(jwtPayload);
 
     const accessToken = generateToken(jwtPayload, envVars.JWT_SECRET, "1d")
     const refreshToken = generateToken(jwtPayload, envVars.JWT_REFRESH_TOKEN_SECRET, "30d")

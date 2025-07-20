@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import SSLCommerzPayment from "sslcommerz-lts";
+import { envVars } from "../../config/env";
 
 
-const store_id = "jibik687a3b8752761";
-const store_passwd = "jibik687a3b8752761@ssl";
+const store_id = envVars.SSL_STORE_ID;
+const store_passwd = envVars.SSL_STORE_PASS;
 const is_live = false; // false for sandbox, true for live
 
 const initiation = async (req:Request, res: Response) => {

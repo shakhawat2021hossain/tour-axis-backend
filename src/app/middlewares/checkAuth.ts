@@ -5,7 +5,8 @@ import { envVars } from "../config/env";
 
 export const checkAuth = (...authRoles: string[]) => async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const token = req.headers.authorization;
+        const token = req.cookies.accessToken;
+        // console.log(token);
         if (!token) {
             throw new AppError(403, "No access token found!")
         }
@@ -14,6 +15,7 @@ export const checkAuth = (...authRoles: string[]) => async (req: Request, res: R
         if (!authRoles.includes(isVerified.role)) {
             throw new AppError(403, "You are not permitted for accessing the route!")
         }
+        // console.log(isVerified);
         req.user = isVerified
         next()
     }
