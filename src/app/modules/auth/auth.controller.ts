@@ -6,6 +6,7 @@ import httpStatus from "http-status-codes"
 import AppError from "../../erroHelpers/AppError"
 import { setCookies } from "../../utils/setCookies"
 import { JwtPayload } from "jsonwebtoken"
+import { userTokens } from "../../utils/userTokens"
 
 const credentialLogin = catchAsync(async (req: Request, res: Response) => {
 
@@ -80,9 +81,24 @@ const resetPass = catchAsync(async(req: Request, res: Response) =>{
     })
 })
 
+const googleCallback = catchAsync(async(req: Request, res: Response) =>{
+    const redirectTo =  (req.query.state as string) || '/'
+    const cleanRedirectTo = redirectTo.startsWith('/') ? redirectTo.slice(1) : redirectTo;
+
+    const user =  req.user;
+    if(!user){
+        throw new AppError(httpStatus.NOT_FOUND, "User Not Found")
+    }
+
+    const tokens = await userTokens(user)
+    setCookies(res, tokens)
+    res.redirect(`http://localhost:5174/${cleanRedirectTo}`)
+})
+
 export const authControllers = {
     credentialLogin,
     getNewAccessToken,
     logOut,
-    resetPass
+    resetPass,
+    googleCallback
 }
