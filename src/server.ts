@@ -1,11 +1,12 @@
 /* eslint-disable no-console */
-import { Server } from 'http'
+// import { Server } from 'http'
 import mongoose from 'mongoose';
 import app from './app';
 import { envVars } from './app/config/env';
+import { adminSeed } from './app/utils/adminSeed';
 
 
-let server: Server;
+// let server: Server;
 const port = envVars.PORT || 3000;
 
 const startServer = async () => {
@@ -13,7 +14,7 @@ const startServer = async () => {
         await mongoose.connect(envVars.MONGO_URI as string)
         console.log('✅ Connected to MongoDB');
 
-        server = app.listen(port, () => {
+        app.listen(port, () => {
             console.log(`🚀 Server is running on port ${port}`);
         });
 
@@ -24,4 +25,7 @@ const startServer = async () => {
     }
 }
 
-startServer()
+(async() =>{
+    await startServer()
+    await adminSeed()
+})()
