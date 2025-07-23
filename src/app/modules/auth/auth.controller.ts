@@ -37,6 +37,8 @@ const credentialLogin = catchAsync(async (req: Request, res: Response, next: Nex
         if(err){
             return next(new AppError(httpStatus.BAD_REQUEST, err))
         }
+
+        // if not user, not matched pass, auths handling way
         if(!user){
             return next(new AppError(httpStatus.BAD_REQUEST, info.message))
         }
