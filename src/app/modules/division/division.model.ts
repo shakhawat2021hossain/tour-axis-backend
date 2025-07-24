@@ -3,11 +3,11 @@ import { IDivision } from "./division.interface";
 
 const divisionSchema = new Schema<IDivision>({
     name: {type: String, required: true, unique: true},
-    slug: {type: String, required: true},
+    slug: {type: String, unique: true},
     thumbnail: {type: String},
     description: {type: String},
 },{
     timestamps: true
 })
 
-export const division =  model("Division", divisionSchema)
+export const Division =  model("Division", divisionSchema)
