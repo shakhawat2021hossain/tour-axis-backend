@@ -43,4 +43,4 @@ const tourSchema = new Schema<ITour>({
     timestamps: true
 })
 
-export const tour = model("Tour", tourSchema)
+export const Tour = model("Tour", tourSchema)
